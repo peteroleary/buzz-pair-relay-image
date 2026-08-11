@@ -84,6 +84,7 @@ RUN apt-get update \
         ca-certificates \
         curl \
         git \
+        gosu \
         openssl \
     && rm -rf /var/lib/apt/lists/* \
     && groupadd --system --gid 1000 buzz \
@@ -106,7 +107,10 @@ COPY --from=builder /build/target/release/buzz-admin      /usr/local/bin/buzz-ad
 COPY --from=builder /build/target/release/buzz-pair-relay /usr/local/bin/buzz-pair-relay
 COPY --chmod=0755 entrypoint.sh /usr/local/bin/buzz-entrypoint
 
-USER buzz:buzz
+# Start as root, not buzz: a Railway volume mounted at /data/git arrives
+# root-owned, and only root can reclaim it. The entrypoint chowns the data
+# dirs and drops to buzz via gosu before exec'ing the relay binary.
+USER root
 WORKDIR /var/lib/buzz
 
 # BUZZ_BINARY selects the binary (default: buzz-pair-relay) so one image can
