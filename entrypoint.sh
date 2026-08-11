@@ -14,8 +14,15 @@ esac
 # When started as root, reclaim ownership of the data dirs, then drop to the
 # buzz user. Without a volume the dirs are already buzz-owned and this is a
 # cheap no-op.
+#
+# The chown is guarded: only a fresh (root-owned) mount pays the recursive
+# walk. Once the volume holds real repos, chown -R over many small git
+# objects on every boot would quietly grow until it ate the healthcheck
+# window — and that failure looks identical to the outage this fixes.
 if [ "$(id -u)" = "0" ]; then
-  chown -R buzz:buzz /data/git
+  if [ "$(stat -c %u /data/git)" != "$(id -u buzz)" ]; then
+    chown -R buzz:buzz /data/git
+  fi
   exec gosu buzz "/usr/local/bin/$bin" "$@"
 fi
 
