@@ -17,12 +17,13 @@ ARG NODE_VERSION=24
 ARG DEBIAN_VERSION=bookworm
 
 # ─── Stage 0: fetch pinned hvgapp source ────────────────────────────────────
-# ADD auto-extracts the GitHub tarball; the SHA-pinned URL means Docker layer
-# caching busts exactly when the deploy pin changes.
+# NOTE: ADD auto-extracts LOCAL tarballs only — a remote URL is just
+# downloaded. Extract explicitly. The SHA-pinned URL busts the Docker layer
+# cache exactly when the deploy pin changes.
 FROM alpine:3.20 AS src
 ARG HVGAPP_SHA
-ADD https://github.com/peteroleary/hvgapp/archive/${HVGAPP_SHA}.tar.gz /tmp/
-RUN mv /tmp/hvgapp-${HVGAPP_SHA} /src
+ADD https://github.com/peteroleary/hvgapp/archive/${HVGAPP_SHA}.tar.gz /tmp/hvgapp.tar.gz
+RUN tar -xzf /tmp/hvgapp.tar.gz -C /tmp && mv /tmp/hvgapp-${HVGAPP_SHA} /src
 
 # ─── Stage 1: cargo-chef base ───────────────────────────────────────────────
 FROM rust:${RUST_VERSION}-${DEBIAN_VERSION} AS chef
