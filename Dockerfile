@@ -104,8 +104,11 @@ RUN mkdir -p /data/git && chown buzz:buzz /data/git
 COPY --from=builder /build/target/release/buzz-relay      /usr/local/bin/buzz-relay
 COPY --from=builder /build/target/release/buzz-admin      /usr/local/bin/buzz-admin
 COPY --from=builder /build/target/release/buzz-pair-relay /usr/local/bin/buzz-pair-relay
+COPY --chmod=0755 entrypoint.sh /usr/local/bin/buzz-entrypoint
 
 USER buzz:buzz
 WORKDIR /var/lib/buzz
 
-ENTRYPOINT ["/usr/local/bin/buzz-pair-relay"]
+# BUZZ_BINARY selects the binary (default: buzz-pair-relay) so one image can
+# back both the pair-relay sidecar and the main relay service.
+ENTRYPOINT ["/usr/local/bin/buzz-entrypoint"]
