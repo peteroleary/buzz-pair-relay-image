@@ -22,7 +22,7 @@ ARG DEBIAN_VERSION=bookworm
 # cache exactly when the deploy pin changes.
 FROM alpine:3.20 AS src
 ARG HVGAPP_SHA
-ADD https://github.com/peteroleary/hvgapp/archive/${HVGAPP_SHA}.tar.gz /tmp/hvgapp.tar.gz
+ADD https://github.com/pheartkeys/hvgapp/archive/${HVGAPP_SHA}.tar.gz /tmp/hvgapp.tar.gz
 RUN tar -xzf /tmp/hvgapp.tar.gz -C /tmp && mv /tmp/hvgapp-${HVGAPP_SHA} /src
 
 # ─── Stage 1: cargo-chef base ───────────────────────────────────────────────
