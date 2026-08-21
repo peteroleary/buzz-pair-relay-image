@@ -10,7 +10,7 @@
 # To deploy a newer hvgapp commit, bump HVGAPP_SHA below and push — the SHA is
 # the deploy pin, and each bump is an auditable deploy in this repo's history.
 
-ARG HVGAPP_SHA=3e4250f9130dd8b51aafe724a2a28cfe466b2f55
+ARG HVGAPP_SHA=7b672c90b1002090f2de348770297daa7fe10dd3
 
 ARG RUST_VERSION=1.95
 ARG NODE_VERSION=24
